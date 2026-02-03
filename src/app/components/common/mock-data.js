@@ -33,3 +33,39 @@ export const appointments = {
     "11:00 PM": { type: "Lunch Break", isBreak: true },
   },
 };
+
+export const patients = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    email: "sarah.j@email.com",
+    age: 36,
+    phone: "+44 7700 900123",
+    lastVisit: "Nov 10, 2025",
+    visits: 12,
+    imageSrc: "https://api.dicebear.com/7.x/avataaars/svg?seed=patient",
+    type: "Regular",
+  },
+  {
+    id: 2,
+    name: "Ameer Hamza",
+    email: "sarah.j@email.com",
+    age: 36,
+    phone: "+44 7700 900123",
+    lastVisit: "Nov 10, 2025",
+    visits: 12,
+    imageSrc: "https://api.dicebear.com/7.x/avataaars/svg?seed=patient",
+    type: "New",
+  },
+  {
+    id: 3,
+    name: "Sarah Johnson",
+    email: "sarah.j@email.com",
+    age: 36,
+    phone: "+44 7700 900123",
+    lastVisit: "Nov 10, 2025",
+    visits: 12,
+    imageSrc: "https://api.dicebear.com/7.x/avataaars/svg?seed=patient",
+    type: "Regular",
+  },
+];
