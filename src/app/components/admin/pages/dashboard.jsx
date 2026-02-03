@@ -35,7 +35,12 @@ const staffsOverview = [
 export default function DashboardPage() {
   return (
     <div className="space-y-4">
-      <h1 className="mb-2 text-gray-400 font-normal">Waitlist</h1>
+      <div className="mb-4">
+        <h2 className="text-3xl font-bold mb-2">System Overview</h2>
+        <p className="text-gray-600">
+          Manage your clinic operations and monitor performance
+        </p>
+      </div>
 
       {/* Stats */}
       <div className="grid md:grid-cols-4 gap-3 mb-8">
