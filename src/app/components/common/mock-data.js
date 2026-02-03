@@ -1,0 +1,35 @@
+export const weekDays = [
+  { key: "mon", label: "Monday, Jan 13" },
+  { key: "tue", label: "Tuesday, Jan 14" },
+  { key: "wed", label: "Wednesday, Jan 15" },
+  { key: "thu", label: "Thursday, Jan 16" },
+  { key: "fri", label: "Friday, Jan 17" },
+  { key: "sat", label: "Saturday, Jan 18" },
+];
+
+export const timeSlots = [
+  "9:00 AM",
+  "10:00 AM",
+  "11:00 AM",
+  "12:00 PM",
+  "1:00 PM",
+  "2:00 PM",
+  "3:00 PM",
+  "4:00 PM",
+  "5:00 PM",
+];
+
+export const appointments = {
+  mon: {
+    "9:00 AM": { patient: "John Smith", type: "Standard Eye Test" },
+    "11:00 AM": { patient: "John Smith", type: "Standard Eye Test" },
+    "12:00 PM": { type: "Lunch Break", isBreak: true },
+    "2:00 PM": { patient: "John Smith", type: "Standard Eye Test" },
+    "3:00 PM": { patient: "John Smith", type: "Standard Eye Test" },
+  },
+  tue: {
+    "9:00 AM": { patient: "Ameer Hamza", type: "Standard Eye Test" },
+    "11:00 AM": { patient: "John Smith", type: "Standard Eye Test" },
+    "11:00 PM": { type: "Lunch Break", isBreak: true },
+  },
+};
