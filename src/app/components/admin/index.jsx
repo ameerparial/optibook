@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AdminDashboardLayout from "./layout/adminLayout";
 import ClinicDiary from "./pages/clinic-diary";
+import DashboardPage from "./pages/dashboard";
 
 export default function AdminApp({ onLogout }) {
   const [active, setActive] = useState("dashboard");
@@ -14,7 +15,7 @@ export default function AdminApp({ onLogout }) {
       {(active) => {
         switch (active) {
           case "dashboard":
-            return <h1>Dashboard</h1>;
+            return <DashboardPage />;
           case "diary":
             return <ClinicDiary />;
           case "analytics":
