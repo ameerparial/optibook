@@ -39,7 +39,7 @@ export default function Sidebar({ active, onChange, onLogout }) {
     >
       {/* Logo */}
 
-      <div className="flex items-center gap-3 px-4 py-5 border-b">
+      <div className="flex items-center gap-3 px-4 py-5 border-b h-16">
         {!collapsed && (
           <>
             <div className="w-10 h-10 bg-linear-to-br from-teal-600 to-blue-600 rounded-lg flex items-center justify-center">
@@ -52,14 +52,16 @@ export default function Sidebar({ active, onChange, onLogout }) {
             </div>
           </>
         )}
-        <button
-          onClick={() => {
-            setCollapsed(!collapsed);
-          }}
-          className="ml-auto cursor-pointer"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+        {!isMobileView && (
+          <button
+            onClick={() => {
+              setCollapsed(!collapsed);
+            }}
+            className={`${collapsed ? "mx-auto" : "ml-auto"} cursor-pointer`}
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
       {/* Nav */}
