@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Calendar,
@@ -11,6 +11,7 @@ import {
   Eye,
 } from "lucide-react";
 import { cn } from "../../ui/utils";
+import useIsMobile from "../../../hook/useIsMobile";
 
 const navItems = [
   { label: "Dashboard", icon: LayoutDashboard, key: "dashboard" },
@@ -23,6 +24,11 @@ const navItems = [
 
 export default function Sidebar({ active, onChange, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
+  const isMobileView = useIsMobile();
+
+  useEffect(() => {
+    setCollapsed(isMobileView);
+  }, [isMobileView]);
 
   return (
     <aside
@@ -47,7 +53,9 @@ export default function Sidebar({ active, onChange, onLogout }) {
           </>
         )}
         <button
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => {
+            setCollapsed(!collapsed);
+          }}
           className="ml-auto cursor-pointer"
         >
           <Menu className="w-5 h-5" />
@@ -55,7 +63,7 @@ export default function Sidebar({ active, onChange, onLogout }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-4 space-y-1">
+      <nav className="flex-1 px-2 py-4 space-y-2">
         {navItems.map((item) => (
           <button
             key={item.key}
@@ -66,7 +74,11 @@ export default function Sidebar({ active, onChange, onLogout }) {
             )}
           >
             <item.icon className="w-5 h-5" />
-            {!collapsed && <span className="">{item.label}</span>}
+            {!collapsed && (
+              <span className={`${active === item.key ? "" : "font-normal"}`}>
+                {item.label}
+              </span>
+            )}
           </button>
         ))}
       </nav>
