@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 
 export default function Header() {
   return (
-    <header className="h-16 bg-white border-b px-6 flex items-center justify-end">
+    <header className="sticky top-0 h-16 bg-white border-b px-6 flex items-center justify-end">
       <div className="flex items-center gap-3">
         <Avatar>
           <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=doctor" />
