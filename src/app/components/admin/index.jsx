@@ -5,6 +5,7 @@ import DashboardPage from "./pages/dashboard";
 import AdminSettings from "./pages/setting";
 import StaffManagement from "./pages/staffManagement";
 import PatientsPage from "./pages/patients";
+import AnalyticsPage from "./pages/analytics";
 
 export default function AdminApp({ onLogout }) {
   const [active, setActive] = useState("dashboard");
@@ -22,7 +23,7 @@ export default function AdminApp({ onLogout }) {
           case "diary":
             return <ClinicDiary />;
           case "analytics":
-            return <h1>Analytics</h1>;
+            return <AnalyticsPage />;
           case "patients":
             return <PatientsPage />;
           case "staff":
