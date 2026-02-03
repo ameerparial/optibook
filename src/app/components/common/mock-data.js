@@ -136,3 +136,40 @@ export const doctors = [
     ],
   },
 ];
+
+//Staff data:
+export const staffData = [
+  {
+    id: 1,
+    name: "Dr. Emma Wilson",
+    role: "Senior Optometrist",
+    room: "Room 2",
+    experience: "5 years",
+    today: 8,
+    week: 42,
+    utilization: 87,
+    status: true,
+  },
+  {
+    id: 2,
+    name: "Dr. James Chen",
+    role: "Contact Lens Specialist",
+    room: "Room 1",
+    experience: "7 years",
+    today: 9,
+    week: 48,
+    utilization: 92,
+    status: true,
+  },
+  {
+    id: 3,
+    name: "Dr. Sarah Miller",
+    role: "Pediatric Specialist",
+    room: "Room 3",
+    experience: "4 years",
+    today: 7,
+    week: 38,
+    utilization: 85,
+    status: true,
+  },
+];
