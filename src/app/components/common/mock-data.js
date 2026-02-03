@@ -45,6 +45,7 @@ export const patients = [
     visits: 12,
     imageSrc: "https://api.dicebear.com/7.x/avataaars/svg?seed=patient",
     type: "Regular",
+    status: false,
   },
   {
     id: 2,
@@ -56,6 +57,7 @@ export const patients = [
     visits: 12,
     imageSrc: "https://api.dicebear.com/7.x/avataaars/svg?seed=patient",
     type: "New",
+    status: true,
   },
   {
     id: 3,
@@ -67,6 +69,7 @@ export const patients = [
     visits: 12,
     imageSrc: "https://api.dicebear.com/7.x/avataaars/svg?seed=patient",
     type: "Regular",
+    status: true,
   },
 ];
 
@@ -173,3 +176,17 @@ export const staffData = [
     status: true,
   },
 ];
+
+//mock stats for patient admin
+export const patientTabStatsAdmin = {
+  totalPatients: 892,
+  activePatients: 420,
+  totalOptometrists: 12,
+  duePatient: 127,
+  thisMonth: 34,
+
+  totalPatientsLabel: "Registered in system",
+  activePatientsLabel: "↗ 83% of total",
+  duePatientLabel: "Needs follow-up",
+  thisMonthLabel: "↗ 12% increase",
+};
