@@ -18,7 +18,9 @@ export default function DashboardLayout({
         <Header />
 
         {/* Scrollable main content */}
-        <main className="flex-1 overflow-auto p-6">{children(active)}</main>
+        <main className="flex-1 overflow-auto p-6 scrollbar-thin">
+          {children(active)}
+        </main>
       </div>
     </div>
   );
