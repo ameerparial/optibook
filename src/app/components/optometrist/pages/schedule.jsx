@@ -38,7 +38,7 @@ const ScheduleSettings = () => {
       </div>
 
       {/* --- Working Hours Card --- */}
-      <Card>
+      <Card className="pt-4">
         <CardContent className="space-y-4">
           <h2 className="text-lg font-semibold">Working Hours</h2>
 
@@ -123,7 +123,7 @@ const ScheduleSettings = () => {
       </Card>
 
       {/* --- Time Off & Holidays Card --- */}
-      <Card>
+      <Card className="pt-4">
         <CardContent className="space-y-4">
           <h2 className="text-lg font-semibold">Time Off & Holidays</h2>
 
@@ -167,7 +167,7 @@ const ScheduleSettings = () => {
       </Card>
 
       {/* --- Appointment Preferences Card --- */}
-      <Card>
+      <Card className="pt-4">
         <CardContent className="space-y-4">
           <h2 className="text-lg font-semibold">Appointment Preferences</h2>
 
