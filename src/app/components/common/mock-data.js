@@ -190,3 +190,8 @@ export const patientTabStatsAdmin = {
   duePatientLabel: "Needs follow-up",
   thisMonthLabel: "↗ 12% increase",
 };
+
+export const noShowData = {
+  labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+  rates: [6, 9, 5, 11, 7, 4], // percentages
+};

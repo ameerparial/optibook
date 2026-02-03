@@ -17,6 +17,8 @@ import { Card, CardContent } from "../../ui/card";
 import { Button } from "../../ui/button";
 import { Avatar, AvatarImage, AvatarFallback } from "../../ui/avatar";
 import { ToggleButton } from "../../common/toggle";
+import BarChart from "../../common/barchart";
+import NoShowLineChart from "../../common/NoShowRate";
 
 const performance = [
   {
@@ -117,26 +119,20 @@ export default function AnalyticsPage() {
         </Card>
       </div>
 
-      {/* <Card className="py-4">
-        <CardContent className="space-y-4">
-          <h2 className="text-lg font-semibold">Quick Stats</h2>
-          <div className="space-y-2">
-            {quickStats.map((stat, idx) => (
-              <div
-                key={idx}
-                className={`flex justify-between items-center px-3 py-2 ${
-                  idx !== quickStats.length - 1
-                    ? "border-b border-gray-200"
-                    : ""
-                }`}
-              >
-                <span>{stat.label}</span>
-                <strong>{stat.value}</strong>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card> */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="p-4">
+          <h2 className="text-sm font-semibold mb-3">
+            Number of Appointments per Day
+          </h2>
+          <BarChart />
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <h2 className="text-sm font-semibold mb-3">No-Show Rate (Daily)</h2>
+            <NoShowLineChart />
+          </CardContent>
+        </Card>
+      </div>
 
       <Card>
         <CardContent className="p-4 space-y-4">
