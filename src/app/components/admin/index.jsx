@@ -2,6 +2,7 @@ import { useState } from "react";
 import AdminDashboardLayout from "./layout/adminLayout";
 import ClinicDiary from "./pages/clinic-diary";
 import DashboardPage from "./pages/dashboard";
+import AdminSettings from "./pages/setting";
 
 export default function AdminApp({ onLogout }) {
   const [active, setActive] = useState("dashboard");
@@ -25,7 +26,7 @@ export default function AdminApp({ onLogout }) {
           case "staff":
             return <h1>Staff</h1>;
           case "setting":
-            return <h1>Setting</h1>;
+            return <AdminSettings />;
         }
       }}
     </AdminDashboardLayout>
