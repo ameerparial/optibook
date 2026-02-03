@@ -163,6 +163,25 @@ const ScheduleSettings = () => {
           <Button onClick={() => console.log("Time Off Request", timeOff)}>
             📝 Submit Request
           </Button>
+
+          <div className="mt-6 pt-6 border-t border-gray-200">
+            <h3 className="mb-4 text-lg font-semibold">Upcoming Time Off</h3>
+
+            <div className="bg-gray-50 p-4 rounded-md mb-3">
+              <div className="flex justify-between items-center">
+                <div>
+                  <strong className="text-gray-800">Summer Holiday</strong>
+                  <br />
+                  <span className="text-gray-500 text-sm">
+                    July 15-29, 2026 (2 weeks)
+                  </span>
+                </div>
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2 py-1 rounded-full">
+                  Approved
+                </span>
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
