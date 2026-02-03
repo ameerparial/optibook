@@ -69,3 +69,27 @@ export const patients = [
     type: "Regular",
   },
 ];
+
+export const waitlistPatients = [
+  {
+    id: 1,
+    name: "Robert Lee",
+    addDate: "Added: Jan 10, 2026",
+    appointmentType: "Contact Lens Follow-up",
+    type: "High Priority",
+  },
+  {
+    id: 2,
+    name: "Robert Lee",
+    addDate: "Added: Jan 10, 2026",
+    appointmentType: "Contact Lens Follow-up",
+    type: "High Priority",
+  },
+  {
+    id: 3,
+    name: "Robert Lee",
+    addDate: "Added: Jan 10, 2026",
+    appointmentType: "Contact Lens Follow-up",
+    type: "High Priority",
+  },
+];

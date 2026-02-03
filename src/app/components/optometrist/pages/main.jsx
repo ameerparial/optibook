@@ -1,7 +1,9 @@
 import { Activity, Calendar, Clock, FileText } from "lucide-react";
 import { Card, CardContent } from "../../ui/card";
+import DashboardStats from "../../common/dashboard/quick";
+import TodaysSchedule from "../../common/dashboard/TodaySchedule";
 
-export default function DashboardComponent() {
+export default function DashboardComponent({ setActive }) {
   return (
     <div className="">
       {/* Welcome Section */}
@@ -70,6 +72,9 @@ export default function DashboardComponent() {
           </CardContent>
         </Card>
       </div>
+
+      <TodaysSchedule setActive={setActive} />
+      <DashboardStats />
 
       {/* Main Content */}
       {/* <Tabs defaultValue="appointments" className="space-y-6">
