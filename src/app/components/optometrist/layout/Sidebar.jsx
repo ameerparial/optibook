@@ -21,7 +21,7 @@ const navItems = [
   { label: "Notifications", icon: Bell, key: "notifications" },
 ];
 
-export default function Sidebar({ active, onChange }) {
+export default function Sidebar({ active, onChange, onLogout }) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -73,7 +73,10 @@ export default function Sidebar({ active, onChange }) {
 
       {/* Logout */}
       <div className="px-2 py-4 border-t">
-        <button className="flex items-center gap-3 px-3 py-2 w-full hover:bg-red-50 text-red-600 rounded-md">
+        <button
+          className="flex items-center gap-3 px-3 py-2 w-full hover:bg-red-50 text-red-600 rounded-md"
+          onClick={onLogout}
+        >
           <LogOut className="w-5 h-5" />
           {!collapsed && <span>Logout</span>}
         </button>
