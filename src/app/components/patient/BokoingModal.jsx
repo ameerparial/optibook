@@ -5,7 +5,6 @@ import {
   User,
   Phone,
   Mail,
-  X,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -25,9 +24,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Calendar } from "../ui/calendar";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { toast } from "sonner";
+import Calendar from "../ui/update-calendar";
 
 const mockDoctors = [
   {
@@ -84,6 +83,8 @@ export function BookingModal({ open, onClose }) {
   const [patientPhone, setPatientPhone] = useState("+1 (555) 123-4567");
   const [patientEmail, setPatientEmail] = useState("john.doe@email.com");
   const [notes, setNotes] = useState("");
+  const [schedulePreference, setSchedulePreference] = useState("manual");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const handleReset = () => {
     setStep(1);
@@ -92,6 +93,8 @@ export function BookingModal({ open, onClose }) {
     setSelectedDate(undefined);
     setSelectedTime("");
     setNotes("");
+    setSchedulePreference("manual");
+    setAiLoading(false);
   };
 
   const handleClose = () => {
@@ -101,7 +104,9 @@ export function BookingModal({ open, onClose }) {
 
   const handleSubmit = () => {
     toast.success("Appointment booked successfully!", {
-      description: `Your appointment with ${mockDoctors.find((d) => d.id === selectedDoctor)?.name} has been confirmed.`,
+      description: `Your appointment with ${
+        mockDoctors.find((d) => d.id === selectedDoctor)?.name
+      } has been confirmed.`,
     });
     handleClose();
   };
@@ -111,11 +116,31 @@ export function BookingModal({ open, onClose }) {
       case 1:
         return selectedDoctor && appointmentType;
       case 2:
-        return selectedDate && selectedTime;
+        return schedulePreference === "smart"
+          ? true
+          : selectedDate && selectedTime;
       case 3:
         return patientName && patientPhone && patientEmail;
       default:
         return false;
+    }
+  };
+
+  const handleNextStep = async () => {
+    if (step === 2 && schedulePreference === "smart") {
+      setAiLoading(true);
+
+      // Simulate AI backend processing
+      setTimeout(() => {
+        const aiDate = new Date();
+        aiDate.setDate(aiDate.getDate() + 3); // +3 days
+        setSelectedDate(aiDate);
+        setSelectedTime("10:30 AM");
+        setAiLoading(false);
+        setStep(step + 1);
+      }, 2000); // 2 sec loader
+    } else {
+      setStep(step + 1);
     }
   };
 
@@ -194,38 +219,100 @@ export function BookingModal({ open, onClose }) {
             </div>
           )}
 
-          {/* Step 2: Date and Time Selection */}
+          {/* Step 2: Date and Time Selection / AI */}
           {step === 2 && (
             <div className="space-y-6">
-              <div className="space-y-2">
-                <Label>Select Date</Label>
-                <div className="flex justify-center">
-                  <Calendar
-                    mode="single"
-                    selected={selectedDate}
-                    onSelect={setSelectedDate}
-                    disabled={(date) => date < new Date()}
-                    className="rounded-md border"
-                  />
+              {/* Scheduling Preference */}
+              <div className="space-y-3">
+                <Label>Scheduling Preference</Label>
+
+                <div className="grid gap-3">
+                  {/* Manual */}
+                  <div
+                    onClick={() => setSchedulePreference("manual")}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      schedulePreference === "manual"
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-200 hover:border-blue-300"
+                    }`}
+                  >
+                    <p className="font-semibold">Manual Selection</p>
+                    <p className="text-sm text-gray-600">
+                      Choose your preferred date and time
+                    </p>
+                  </div>
+
+                  {/* Smart Allocation */}
+                  <div
+                    onClick={() => setSchedulePreference("smart")}
+                    className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      schedulePreference === "smart"
+                        ? "border-purple-500 bg-purple-50"
+                        : "border-gray-200 hover:border-purple-300"
+                    }`}
+                  >
+                    <p className="font-semibold flex items-center gap-2">
+                      🤖 Smart Allocation (AI)
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      Let AI find the most optimal schedule for you
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              {selectedDate && (
-                <div className="space-y-2">
-                  <Label>Select Time</Label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {timeSlots.map((time) => (
-                      <Button
-                        key={time}
-                        variant={selectedTime === time ? "default" : "outline"}
-                        onClick={() => setSelectedTime(time)}
-                        className="w-full"
-                      >
-                        <Clock className="w-4 h-4 mr-1" />
-                        {time}
-                      </Button>
-                    ))}
+              {/* Manual Date & Time */}
+              {schedulePreference === "manual" && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Select Date</Label>
+                    <div className="flex justify-center">
+                      <Calendar
+                        mode="single"
+                        value={selectedDate}
+                        onChange={setSelectedDate}
+                        disabled={(date) => date < new Date()}
+                        className="rounded-md border"
+                      />
+                    </div>
                   </div>
+
+                  {selectedDate && (
+                    <div className="space-y-2">
+                      <Label>Select Time</Label>
+                      <div className="grid grid-cols-3 gap-2">
+                        {timeSlots.map((time) => (
+                          <Button
+                            key={time}
+                            variant={
+                              selectedTime === time ? "default" : "outline"
+                            }
+                            onClick={() => setSelectedTime(time)}
+                          >
+                            <Clock className="w-4 h-4 mr-1" />
+                            {time}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* AI Loader / Preview */}
+              {schedulePreference === "smart" && (
+                <div className="p-4 rounded-lg bg-purple-50 border border-purple-200 flex flex-col items-center gap-2">
+                  <p className="font-semibold mb-1">🤖 AI Scheduling Enabled</p>
+                  <p className="text-sm text-gray-600 text-center">
+                    Our system will analyze doctor availability, appointment
+                    type, and clinic load to assign the best possible date &
+                    time.
+                  </p>
+                  {aiLoading && (
+                    <div className="mt-4 animate-pulse text-purple-600 font-medium">
+                      Optimizing your schedule...
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -257,6 +344,11 @@ export function BookingModal({ open, onClose }) {
                   <p>
                     <span className="text-gray-600">Time:</span> {selectedTime}
                   </p>
+                  {schedulePreference === "smart" && (
+                    <p className="text-purple-600 text-sm font-medium">
+                      🤖 Scheduled via Smart Allocation
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -331,10 +423,10 @@ export function BookingModal({ open, onClose }) {
             )}
             {step < 3 ? (
               <Button
-                onClick={() => setStep(step + 1)}
-                disabled={!isStepValid()}
+                onClick={handleNextStep}
+                disabled={!isStepValid() || aiLoading}
               >
-                Continue
+                {aiLoading ? "Optimizing Schedule..." : "Continue"}
               </Button>
             ) : (
               <Button onClick={handleSubmit} disabled={!isStepValid()}>
