@@ -93,3 +93,46 @@ export const waitlistPatients = [
     type: "High Priority",
   },
 ];
+
+// Clinic diary mock data
+
+export const doctors = [
+  {
+    id: "emma",
+    name: "Dr. Emma Wilson",
+    room: "Room 2",
+    schedule: [
+      { time: "9:00 AM", patient: "John Smith" },
+      { time: "10:00 AM", patient: "Mary Johnson" },
+      { time: "12:00 PM", isLunch: true },
+      { time: "2:00 PM", patient: "Sarah Johnson" },
+      { time: "3:00 PM", patient: "David Brown" },
+      { time: "4:00 PM", patient: "Sara Ali" },
+    ],
+  },
+  {
+    id: "james",
+    name: "Dr. James Chen",
+    room: "Room 1",
+    schedule: [
+      { time: "9:00 AM", patient: "John Smith" },
+      { time: "10:00 AM", patient: "Mary Johnson" },
+      { time: "11:00 AM", patient: "Sarah Johnson" },
+      { time: "12:30 PM", isLunch: true },
+      { time: "3:00 PM", patient: "David Brown" },
+    ],
+  },
+  {
+    id: "sarah",
+    name: "Dr. Sarah Miller",
+    room: "Room 3",
+    schedule: [
+      { time: "9:00 AM", patient: "John Smith" },
+      { time: "10:00 AM", patient: "Mary Johnson" },
+      { time: "12:00 PM", isLunch: true },
+      { time: "2:00 PM", patient: "Sarah Johnson" },
+      { time: "3:00 PM", patient: "David Brown" },
+      { time: "4:00 PM", patient: "Sara Ali" },
+    ],
+  },
+];
