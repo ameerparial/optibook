@@ -79,9 +79,9 @@ export function BookingModal({ open, onClose }) {
   const [appointmentType, setAppointmentType] = useState("");
   const [selectedDate, setSelectedDate] = useState();
   const [selectedTime, setSelectedTime] = useState("");
-  const [patientName, setPatientName] = useState("John Doe");
+  const [patientName, setPatientName] = useState("Sarah");
   const [patientPhone, setPatientPhone] = useState("+1 (555) 123-4567");
-  const [patientEmail, setPatientEmail] = useState("john.doe@email.com");
+  const [patientEmail, setPatientEmail] = useState("Sarah@email.com");
   const [notes, setNotes] = useState("");
   const [schedulePreference, setSchedulePreference] = useState("manual");
   const [aiLoading, setAiLoading] = useState(false);

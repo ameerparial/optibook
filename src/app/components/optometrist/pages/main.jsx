@@ -9,7 +9,7 @@ export default function DashboardComponent({ setActive }) {
       {/* Welcome Section */}
       <div className="mb-8">
         <h1 className="mb-2 text-gray-400">Dashboard</h1>
-        <h2 className="text-3xl font-bold mb-2">Good Morning, Dr. Johnson!</h2>
+        <h2 className="text-3xl font-bold mb-2">Good Morning, Dr. Wilson!</h2>
         <p className="text-gray-600">
           You have 4 appointments scheduled for today
         </p>

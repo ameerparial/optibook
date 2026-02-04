@@ -31,7 +31,7 @@ const mockAppointments = [
     id: 1,
     date: "2026-01-20",
     time: "10:00 AM",
-    doctor: "Dr. Sarah Johnson",
+    doctor: "Dr. Emma Wilson",
     type: "Comprehensive Eye Exam",
     status: "upcoming",
     image:
@@ -41,7 +41,7 @@ const mockAppointments = [
     id: 2,
     date: "2026-01-15",
     time: "2:30 PM",
-    doctor: "Dr. Michael Chen",
+    doctor: "Dr. James Chen",
     type: "Contact Lens Fitting",
     status: "completed",
     image:
@@ -103,7 +103,7 @@ export function PatientDashboard({ onLogout }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, John!</h2>
+          <h2 className="text-3xl font-bold mb-2">Welcome back, Sarah!</h2>
           <p className="text-gray-600">
             Manage your eye care appointments and health records
           </p>
@@ -169,7 +169,7 @@ export function PatientDashboard({ onLogout }) {
         <Tabs defaultValue="appointments" className="space-y-6">
           <TabsList>
             <TabsTrigger value="appointments">Appointments</TabsTrigger>
-            <TabsTrigger value="records">Medical Records</TabsTrigger>
+            {/* <TabsTrigger value="records">Medical Records</TabsTrigger> */}
             <TabsTrigger value="profile">Profile</TabsTrigger>
           </TabsList>
 
@@ -291,7 +291,7 @@ export function PatientDashboard({ onLogout }) {
                     <AvatarFallback>JD</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-semibold text-lg">John Doe</h3>
+                    <h3 className="font-semibold text-lg">Sarah</h3>
                     <p className="text-gray-600">Patient ID: PT-2026-001</p>
                   </div>
                 </div>
@@ -299,7 +299,7 @@ export function PatientDashboard({ onLogout }) {
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Mail className="w-4 h-4" />
-                      <span>john.doe@email.com</span>
+                      <span>sarah@email.com</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Phone className="w-4 h-4" />

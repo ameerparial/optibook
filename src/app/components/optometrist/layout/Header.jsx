@@ -9,7 +9,7 @@ export default function Header() {
           <AvatarFallback>DJ</AvatarFallback>
         </Avatar>
         <div className="text-right hidden sm:block">
-          <p className="font-medium">Dr. Sarah Johnson</p>
+          <p className="font-medium">Dr. Emma Wilson</p>
           <p className="text-sm text-gray-500">Optometrist</p>
         </div>
       </div>
