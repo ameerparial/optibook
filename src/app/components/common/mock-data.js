@@ -101,7 +101,7 @@ export const waitlistPatients = [
     name: "Emily Davis",
     addDate: "Added: Jan 10, 2026",
     appointmentType: "Standard Eye Test",
-    type: "High Priority",
+    type: "Low Priority",
   },
   {
     id: 3,
@@ -109,6 +109,21 @@ export const waitlistPatients = [
     addDate: "Added: Jan 10, 2026",
     appointmentType: "PCO Test",
     type: "High Priority",
+  },
+  {
+    id: 4,
+    name: "Abraham ",
+    addDate: "Added: Jan 10, 2026",
+    appointmentType: "PCO Test",
+    type: "Medium Priority",
+  },
+  ,
+  {
+    id: 5,
+    name: "David A",
+    addDate: "Added: Jan 10, 2026",
+    appointmentType: "PCO Test",
+    type: "Low Priority",
   },
 ];
 
