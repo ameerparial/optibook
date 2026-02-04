@@ -117,7 +117,7 @@ export const waitlistPatients = [
     appointmentType: "PCO Test",
     type: "Medium Priority",
   },
-  ,
+
   {
     id: 5,
     name: "David A",
