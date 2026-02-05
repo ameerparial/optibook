@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Calendar as CalendarIcon,
   Clock,
@@ -27,6 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { toast } from "sonner";
 import Calendar from "../ui/update-calendar";
+import API from "../../../lib/api";
 
 const mockDoctors = [
   {
@@ -56,6 +57,11 @@ const appointmentTypes = [
   "Prescription Update",
   "Eye Emergency",
   "Children's Eye Exam",
+  "Standard Eye Test",
+  "Contact Lens Fitting",
+  "Contact Lens Follow-up",
+  "PCO Test",
+  "Other",
 ];
 
 const timeSlots = [
@@ -73,18 +79,49 @@ const timeSlots = [
   "4:30 PM",
 ];
 
-export function BookingModal({ open, onClose }) {
+export function BookingModal({ open, onClose, userData }) {
   const [step, setStep] = useState(1);
   const [selectedDoctor, setSelectedDoctor] = useState("");
   const [appointmentType, setAppointmentType] = useState("");
   const [selectedDate, setSelectedDate] = useState();
   const [selectedTime, setSelectedTime] = useState("");
-  const [patientName, setPatientName] = useState("Sarah");
-  const [patientPhone, setPatientPhone] = useState("+1 (555) 123-4567");
-  const [patientEmail, setPatientEmail] = useState("Sarah@email.com");
+  const [patientName, setPatientName] = useState("");
+  const [patientPhone, setPatientPhone] = useState("pPhone");
+  const [patientEmail, setPatientEmail] = useState("");
   const [notes, setNotes] = useState("");
   const [schedulePreference, setSchedulePreference] = useState("manual");
   const [aiLoading, setAiLoading] = useState(false);
+
+  const [doctors, setDoctors] = useState([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(false);
+
+  console.log({ doctors });
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        setLoadingDoctors(true);
+        const res = await API.get("/optometrists");
+        setDoctors(res.data.data);
+      } catch (error) {
+        toast.error("Failed to load optometrists");
+      } finally {
+        setLoadingDoctors(false);
+      }
+    };
+
+    if (open) fetchDoctors();
+  }, [open]);
+
+  useEffect(() => {
+    const email = userData?.email;
+    const name = userData?.name;
+    const phone = userData?.phone;
+
+    setPatientEmail(email);
+    setPatientName(name);
+    setPatientPhone(phone);
+  }, [userData]);
 
   const handleReset = () => {
     setStep(1);
@@ -102,14 +139,45 @@ export function BookingModal({ open, onClose }) {
     onClose();
   };
 
-  const handleSubmit = () => {
-    toast.success("Appointment booked successfully!", {
-      description: `Your appointment with ${
-        mockDoctors.find((d) => d.id === selectedDoctor)?.name
-      } has been confirmed.`,
-    });
-    handleClose();
+  const handleSubmit = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      await API.post("/appointments", {
+        patientId: user.role === "patient" ? user.id : null,
+        optometristId: selectedDoctor,
+        date: selectedDate,
+        startTime: selectedTime,
+        appointmentType,
+        specialRequirements: notes,
+      });
+
+      console.log({
+        description: `Your appointment with ${
+          doctors.find((d) => d._id === selectedDoctor)?.firstName
+        } has been confirmed.`,
+      });
+
+      toast.success("Appointment booked successfully!", {
+        description: `Your appointment with ${
+          doctors.find((d) => d._id === selectedDoctor)?.firstName
+        } has been confirmed.`,
+      });
+      handleClose();
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Booking failed");
+    }
   };
+
+  // const handleSubmit = () => {
+
+  //   // toast.success("Appointment booked successfully!", {
+  //   //   description: `Your appointment with ${
+  //   //     mockDoctors.find((d) => d.id === selectedDoctor)?.name
+  //   //   } has been confirmed.`,
+  //   // });
+  //   handleClose();
+  // };
 
   const isStepValid = () => {
     switch (step) {
@@ -166,35 +234,44 @@ export function BookingModal({ open, onClose }) {
               <div className="space-y-3">
                 <Label>Select Optometrist</Label>
                 <div className="grid gap-3">
-                  {mockDoctors.map((doctor) => (
-                    <div
-                      key={doctor.id}
-                      className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                        selectedDoctor === doctor.id
-                          ? "border-blue-500 bg-blue-50"
-                          : "border-gray-200 hover:border-blue-300"
-                      }`}
-                      onClick={() => setSelectedDoctor(doctor.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarImage src={doctor.image} />
-                          <AvatarFallback>
-                            {doctor.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-semibold">{doctor.name}</p>
-                          <p className="text-sm text-gray-600">
-                            {doctor.specialization}
-                          </p>
+                  {loadingDoctors && <p>"Doctors loading..."</p>}
+                  {doctors?.length > 0 ? (
+                    doctors?.map((doctor) => (
+                      <div
+                        key={doctor._id}
+                        className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                          selectedDoctor === doctor._id
+                            ? "border-blue-500 bg-blue-50"
+                            : "border-gray-200 hover:border-blue-300"
+                        }`}
+                        onClick={() => setSelectedDoctor(doctor._id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <Avatar>
+                            <AvatarImage
+                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${doctor?._id}`}
+                            />
+                            <AvatarFallback>
+                              {doctor.firstName
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-semibold">
+                              Dr. {doctor.firstName}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {doctor.specialty}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p>Doctors not found</p>
+                  )}
                 </div>
               </div>
 
@@ -326,7 +403,7 @@ export function BookingModal({ open, onClose }) {
                 <div className="space-y-1 text-sm">
                   <p>
                     <span className="text-gray-600">Doctor:</span>{" "}
-                    {mockDoctors.find((d) => d.id === selectedDoctor)?.name}
+                    {doctors?.find((d) => d._id === selectedDoctor)?.firstName}
                   </p>
                   <p>
                     <span className="text-gray-600">Type:</span>{" "}

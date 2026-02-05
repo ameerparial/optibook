@@ -25,6 +25,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { ImageWithFallback } from "../ImageWithFallback";
 import { BookingModal } from "./BokoingModal";
+import { useEffect } from "react";
+import { getMe, getPatientAppointments } from "../../../lib/patient";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import API from "../../../lib/api";
+import { getDaysUntilAppointment, getNextAppointment } from "../../../lib/user";
+import ProfileTab from "./profileUpdate";
 
 const mockAppointments = [
   {
@@ -66,8 +73,91 @@ const mockRecords = [
   },
 ];
 
-export function PatientDashboard({ onLogout }) {
+export function PatientDashboard() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const [appointments, setAppointments] = useState([]);
+  const [isDel, setIsDel] = useState("");
+
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  // useEffect(() => {
+  //   const user = getUserRole();
+  //   setUserInfo({
+  //     name: user.name || user.email || "Sarah",
+  //     email: user.email,
+  //     profile: `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.id}`,
+  //   });
+  // }, []);
+
+  const loadDashboard = async () => {
+    try {
+      const res = await getMe();
+      setUser(res.data.user);
+      setProfile(res.data.profile);
+    } catch (err) {
+      logout();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!isBookingOpen) {
+      fetchAppointments();
+    }
+  }, [isBookingOpen]);
+
+  const fetchAppointments = async () => {
+    // when APIs are ready, just uncomment
+    setAppointments((await getPatientAppointments()).data?.data);
+    // setRecords((await getPatientRecords()).data);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("user"); // clear saved user
+    navigate("/login"); // redirect to login page
+  };
+
+  if (loading) {
+    return <div className="p-10 text-center">Loading dashboard...</div>;
+  }
+
+  const cancelAppointment = async (appointmentId) => {
+    try {
+      setIsDel(appointmentId);
+      await API.delete(`/appointments/${appointmentId}`);
+      toast.success("Appointment cancelled successfully");
+
+      // refresh appointments
+      fetchAppointments();
+    } catch (error) {
+      toast.error(
+        error.response?.data?.message || "Failed to cancel appointment",
+      );
+    } finally {
+      setIsDel(false);
+    }
+  };
+
+  const upcomingCount = appointments?.filter(
+    (a) => a.status === "scheduled",
+  ).length;
+  const completedCount = appointments?.filter(
+    (a) => a.status === "completed",
+  ).length;
+
+  console.log({ profile });
+  console.log({ user });
+  const nextAppointment = getNextAppointment(appointments);
+  const daysUntil = getDaysUntilAppointment(nextAppointment);
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-teal-50">
@@ -89,10 +179,17 @@ export function PatientDashboard({ onLogout }) {
                 New Appointment
               </Button>
               <Avatar>
-                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=patient" />
-                <AvatarFallback>JD</AvatarFallback>
+                <AvatarImage
+                  src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${profile?._id}`}
+                />
+                <AvatarFallback>{profile?.firstName?.[0]}</AvatarFallback>
               </Avatar>
-              <Button variant="ghost" size="icon" onClick={onLogout}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={logout}
+                className="cursor-pointer"
+              >
                 <LogOut className="w-5 h-5" />
               </Button>
             </div>
@@ -103,20 +200,22 @@ export function PatientDashboard({ onLogout }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Welcome back, Sarah!</h2>
+          <h2 className="text-3xl font-bold mb-2">
+            Welcome back, {profile?.firstName}!
+          </h2>
           <p className="text-gray-600">
             Manage your eye care appointments and health records
           </p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Upcoming</p>
-                  <p className="text-2xl font-bold">1</p>
+                  <p className="text-2xl font-bold">{upcomingCount}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                   <Calendar className="w-6 h-6 text-blue-600" />
@@ -129,7 +228,7 @@ export function PatientDashboard({ onLogout }) {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Completed</p>
-                  <p className="text-2xl font-bold">12</p>
+                  <p className="text-2xl font-bold">{completedCount}</p>
                 </div>
                 <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center">
                   <Activity className="w-6 h-6 text-teal-600" />
@@ -137,25 +236,15 @@ export function PatientDashboard({ onLogout }) {
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-600 mb-1">Records</p>
-                  <p className="text-2xl font-bold">8</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-purple-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Next Visit</p>
-                  <p className="text-2xl font-bold">7d</p>
+                  <p className="text-2xl font-bold">
+                    {daysUntil !== null ? `${daysUntil}d` : "--"}
+                  </p>
                 </div>
                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                   <Clock className="w-6 h-6 text-orange-600" />
@@ -174,29 +263,40 @@ export function PatientDashboard({ onLogout }) {
           </TabsList>
 
           <TabsContent value="appointments" className="space-y-4">
-            {mockAppointments.map((appointment) => (
+            {appointments?.length === 0 && (
+              <p className="text-gray-500">No appointments yet.</p>
+            )}
+            {appointments?.map((appointment) => (
               <Card
                 key={appointment.id}
                 className="hover:shadow-lg transition-shadow"
               >
                 <CardContent className="p-6">
                   <div className="flex items-start gap-4">
-                    <ImageWithFallback
+                    <Avatar className="w-20 h-20">
+                      <AvatarImage
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${appointment?.optometrist?._id}`}
+                      />
+                      <AvatarFallback>{profile?.firstName?.[0]}</AvatarFallback>
+                    </Avatar>
+                    {/* <ImageWithFallback
                       src={appointment.image}
                       alt="Optometrist"
                       className="w-20 h-20 rounded-lg object-cover"
-                    />
+                    /> */}
                     <div className="flex-1">
                       <div className="flex items-start justify-between mb-2">
                         <div>
                           <h3 className="font-semibold text-lg">
-                            {appointment.type}
+                            {appointment.appointmentType}
                           </h3>
-                          <p className="text-gray-600">{appointment.doctor}</p>
+                          <p className="text-gray-600">
+                            {appointment?.optometrist?.firstName}
+                          </p>
                         </div>
                         <Badge
                           variant={
-                            appointment.status === "upcoming"
+                            appointment.status === "scheduled"
                               ? "default"
                               : "secondary"
                           }
@@ -218,16 +318,25 @@ export function PatientDashboard({ onLogout }) {
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
-                          {appointment.time}
+                          {appointment?.startTime}
                         </div>
                       </div>
-                      {appointment.status === "upcoming" && (
+                      {appointment.status === "scheduled" && (
                         <div className="flex gap-2 mt-4">
                           <Button size="sm" variant="outline">
                             Reschedule
                           </Button>
-                          <Button size="sm" variant="outline">
-                            Cancel
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                              cancelAppointment(appointment?._id);
+                            }}
+                            disabled={isDel === appointment?._id}
+                          >
+                            {isDel === appointment?._id
+                              ? "Cancelling"
+                              : "Cancel"}
                           </Button>
                         </div>
                       )}
@@ -277,7 +386,8 @@ export function PatientDashboard({ onLogout }) {
           </TabsContent>
 
           <TabsContent value="profile">
-            <Card>
+            <ProfileTab user={user} profile={profile} />
+            {/* <Card>
               <CardHeader>
                 <CardTitle>Personal Information</CardTitle>
                 <CardDescription>
@@ -287,19 +397,21 @@ export function PatientDashboard({ onLogout }) {
               <CardContent className="space-y-6">
                 <div className="flex items-center gap-4">
                   <Avatar className="w-20 h-20">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=patient" />
-                    <AvatarFallback>JD</AvatarFallback>
+                    <AvatarImage
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?._id}`}
+                    />
+                    <AvatarFallback>{profile?.firstName?.[0]}</AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-semibold text-lg">Sarah</h3>
-                    <p className="text-gray-600">Patient ID: PT-2026-001</p>
+                    <h3 className="font-semibold text-lg">{profile?.name}</h3>
+                    <p className="text-gray-600">Patient ID: {}</p>
                   </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Mail className="w-4 h-4" />
-                      <span>sarah@email.com</span>
+                      <span>{user?.email}</span>
                     </div>
                     <div className="flex items-center gap-2 text-gray-600">
                       <Phone className="w-4 h-4" />
@@ -326,7 +438,7 @@ export function PatientDashboard({ onLogout }) {
                 </div>
                 <Button>Edit Profile</Button>
               </CardContent>
-            </Card>
+            </Card> */}
           </TabsContent>
         </Tabs>
       </div>
@@ -334,6 +446,11 @@ export function PatientDashboard({ onLogout }) {
       <BookingModal
         open={isBookingOpen}
         onClose={() => setIsBookingOpen(false)}
+        userData={{
+          email: user?.email,
+          name: profile?.firstName,
+          phone: profile?.phone,
+        }}
       />
     </div>
   );

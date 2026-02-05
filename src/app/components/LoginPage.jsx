@@ -10,46 +10,64 @@ import {
   CardHeader,
   CardTitle,
 } from "./ui/card";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { loginUser } from "../../lib/auth";
 
-export function LoginPage({ onLogin }) {
-  const [selectedRole, setSelectedRole] = useState(null);
+export function LoginPage() {
+  const navigate = useNavigate();
+  const { state } = useLocation();
+
+  const [selectedRole] = useState(state?.role || "patient");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const roles = [
-    {
-      type: "patient",
-      title: "Patient",
-      description: "Book appointments and manage your eye health",
-      icon: User,
-      color: "bg-blue-500",
-    },
-    {
-      type: "optometrist",
-      title: "Optometrist",
-      description: "Manage appointments and patient care",
-      icon: Stethoscope,
-      color: "bg-teal-500",
-    },
-    {
-      type: "admin",
-      title: "Admin",
-      description: "System administration and oversight",
-      icon: Shield,
-      color: "bg-purple-500",
-    },
+    { type: "patient", title: "Patient", icon: User },
+    { type: "optometrist", title: "Optometrist", icon: Stethoscope },
+    { type: "admin", title: "Admin", icon: Shield },
   ];
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (selectedRole) {
-      onLogin(selectedRole);
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await loginUser({
+        email,
+        password,
+      });
+
+      const { token, user } = res.data;
+
+      // role safety check
+      if (user.role !== selectedRole) {
+        throw new Error(`You are not registered as ${selectedRole}`);
+      }
+
+      // persist auth
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(user));
+
+      // redirect
+      navigate("/dashboard");
+      // if (user.role === "patient") navigate("/dashboard");
+      // if (user.role === "optometrist") navigate("/optometrist");
+      // if (user.role === "admin") navigate("/admin");
+    } catch (err) {
+      setError(err.response?.data?.message || err.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-50 via-white to-teal-50 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl">
+        {/* Header */}
         <div className="text-center mb-12">
           <div className="flex items-center justify-center gap-3 mb-4">
             <div className="w-12 h-12 bg-linear-to-br from-blue-600 to-teal-600 rounded-xl flex items-center justify-center">
@@ -64,87 +82,58 @@ export function LoginPage({ onLogin }) {
           </p>
         </div>
 
-        {!selectedRole ? (
-          <div className="grid md:grid-cols-3 gap-6">
-            {roles.map((role) => {
-              const Icon = role.icon;
-              return (
-                <Card
-                  key={role.type}
-                  className="cursor-pointer hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-blue-300"
-                  onClick={() => setSelectedRole(role.type)}
-                >
-                  <CardHeader className="text-center">
-                    <div
-                      className={`w-16 h-16 ${role.color} rounded-2xl flex items-center justify-center mx-auto mb-4`}
-                    >
-                      <Icon className="w-8 h-8 text-white" />
-                    </div>
-                    <CardTitle className="text-2xl">{role.title}</CardTitle>
-                    <CardDescription className="text-base">
-                      {role.description}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <Button className="w-full" variant="outline">
-                      Sign in as {role.title}
-                    </Button>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        ) : (
-          <Card className="max-w-md mx-auto">
-            <CardHeader>
-              <Button
-                variant="ghost"
-                className="w-fit mb-2"
-                onClick={() => setSelectedRole(null)}
-              >
-                ← Back
+        {/* Login Card */}
+        <Card className="max-w-md mx-auto">
+          <CardHeader>
+            <CardTitle className="text-2xl">
+              Sign in as {roles.find((r) => r.type === selectedRole)?.title}
+            </CardTitle>
+            <CardDescription>
+              Enter your credentials to continue
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Password</Label>
+                <Input
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+
+              {error && (
+                <p className="text-sm text-red-500 text-center">{error}</p>
+              )}
+
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Signing in..." : "Sign In"}
               </Button>
-              <CardTitle className="text-2xl">
-                Sign in as {roles.find((r) => r.type === selectedRole)?.title}
-              </CardTitle>
-              <CardDescription>
-                Enter your credentials to continue
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full">
-                  Sign In
-                </Button>
-                {/* <div className="text-center text-sm text-gray-500">
-                  Demo mode - use any credentials
-                </div> */}
-              </form>
-            </CardContent>
-          </Card>
-        )}
+            </form>
+          </CardContent>
+        </Card>
+
+        <p className="text-center mt-4">
+          Don’t have an account?{" "}
+          <Link className="text-blue-600 font-medium" to="/register">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );
