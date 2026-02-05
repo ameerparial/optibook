@@ -85,6 +85,14 @@ export function LoginPage() {
         {/* Login Card */}
         <Card className="max-w-md mx-auto">
           <CardHeader>
+            <Button
+              variant="ghost"
+              className="w-fit mb-2"
+              onClick={() => navigate("/")}
+            >
+              ← Back
+            </Button>
+
             <CardTitle className="text-2xl">
               Sign in as {roles.find((r) => r.type === selectedRole)?.title}
             </CardTitle>

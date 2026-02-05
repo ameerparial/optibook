@@ -4,6 +4,7 @@ import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { registerUser } from "../../lib/auth";
+import { useNavigate } from "react-router-dom";
 
 export function RegisterPage() {
   const [role, setRole] = useState("patient");
@@ -16,6 +17,7 @@ export function RegisterPage() {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -44,6 +46,13 @@ export function RegisterPage() {
   return (
     <Card className="max-w-lg mx-auto mt-16">
       <CardHeader>
+        <Button
+          variant="ghost"
+          className="w-fit mb-2"
+          onClick={() => navigate("/login")}
+        >
+          ← Back
+        </Button>
         <CardTitle>Create Account</CardTitle>
       </CardHeader>
       <CardContent>
